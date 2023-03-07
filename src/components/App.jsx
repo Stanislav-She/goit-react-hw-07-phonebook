@@ -1,4 +1,4 @@
-// import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 // import { nanoid } from 'nanoid';
 // import { ToastContainer, toast } from 'react-toastify';
@@ -13,12 +13,16 @@ import { FormContact } from './FormContact/FormContact';
 //   filterContacts,
 //   removeContacts,
 // } from './redux/sliceContacts';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { getContacts } from './redux/contactsSelector';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchContacts } from 'redux/backendAPI';
+import { getIsLoading, getError } from 'redux/contactsSelector';
 
 // const CONTACTS_KEY = 'contacts';
 
 export const App = () => {
+  const dispatch = useDispatch();
+  const isLoading = useSelector(getIsLoading);
+  const error = useSelector(getError);
   // const parsContacts = JSON.parse(localStorage.getItem(CONTACTS_KEY));
   // const [contacts, setContacts] = useState(
   //   () =>
@@ -32,9 +36,9 @@ export const App = () => {
   // );
   // const [filter, setFilter] = useState('');
 
-  // useEffect(() => {
-  //   localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
-  // }, [contacts]);
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   // const addContact = contact => {
   //   const newContact = {
@@ -74,8 +78,10 @@ export const App = () => {
       <h1 className={AppStyle.primeryTitle}>Phonebook</h1>
       <FormContact />
       {/* <ToastContainer /> */}
+
       <h2 className={AppStyle.secondaryTitle}>Contacts </h2>
       <FilterContact />
+      {isLoading && !error && <p>Request in progress...</p>}
       <ListContact />
     </div>
   );

@@ -1,22 +1,33 @@
+import React from 'react';
 import ListModule from './ListContact.module.css';
 import AddIcon from '../Icons/AddIcon.jsx';
 import { useDispatch, useSelector } from 'react-redux';
-import { getContacts } from 'components/redux/contactsSelector';
-import { removeContacts } from 'components/redux/sliceContacts';
+import { getContacts } from 'redux/contactsSelector';
+// import { removeContacts } from 'redux/contactsSlice';
+import { deleteContact } from 'redux/backendAPI';
 
 export const ListContact = () => {
   const contacts = useSelector(getContacts);
   const dispatch = useDispatch();
+  const filter = useSelector(store => store.filter);
+
+  const handleDelete = id => dispatch(deleteContact(id));
+
+  const filteredContacts = contacts.filter(object =>
+    object.name.toLowerCase().trim().includes(filter)
+  );
 
   return (
     <ul className={ListModule.list}>
       {contacts && contacts.length > 0 ? (
-        contacts.map(({ id, name, number }) => (
+        filteredContacts.map(({ name, number, id }) => (
           <li key={id} className={ListModule.item}>
             <button
               type="button"
               className={ListModule.removeButton}
-              onClick={() => dispatch(removeContacts(id))}
+              onClick={() => {
+                handleDelete(id);
+              }}
               aria-label="Delete contact"
             >
               <AddIcon width="45" height="45" />
