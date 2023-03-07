@@ -1,18 +1,18 @@
-import { getFiltered } from 'components/redux/contactsSelector';
-import { filterContacts } from 'components/redux/sliceContacts';
+import React from 'react';
+// import { getFiltered } from 'redux/contactsSelector';
+// import { filterContacts } from 'redux/contactsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import FilterModule from './FilterContact.module.css';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+// import { ToastContainer, toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
+import { getFilter } from 'redux/filterSlice';
 
 export const FilterContact = () => {
   const dispatch = useDispatch();
-  const filtered = useSelector(getFiltered);
+  const { filter } = useSelector(state => state);
 
   const onChange = event => {
-    const { value } = event.target;
-    toast.info(`Searched for "${value}" `);
-    dispatch(filterContacts(value.trim()));
+    dispatch(getFilter(event.target.value));
   };
 
   return (
@@ -20,14 +20,15 @@ export const FilterContact = () => {
       <input
         className={FilterModule.input}
         type="text"
-        name="filter"
+        name="name"
+        pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
         placeholder="Find contacts by name"
         onChange={event => {
           onChange(event);
         }}
-        value={filtered}
+        value={filter}
       />
-      <ToastContainer />
+      {/* <ToastContainer /> */}
     </label>
   );
 };

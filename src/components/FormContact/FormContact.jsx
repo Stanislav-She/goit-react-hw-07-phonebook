@@ -1,17 +1,20 @@
-import { addContact } from 'components/redux/sliceContacts';
-import { nanoid } from 'nanoid';
-import React from 'react';
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+// import { addContact } from 'redux/contactsSlice';
+// import { nanoid } from 'nanoid';
+import React, { useState } from 'react';
+// import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import FormModule from './FormContact.module.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { getContacts } from 'redux/contactsSelector';
+import { addContact } from 'redux/backendAPI';
 
 export const FormContact = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
   const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
 
   const onInputChange = event => {
     const { name, value } = event.currentTarget;
@@ -26,7 +29,7 @@ export const FormContact = () => {
         break;
 
       default:
-        return;
+        break;
     }
   };
 
@@ -35,9 +38,18 @@ export const FormContact = () => {
     const contact = {
       name: name,
       number: number,
-      id: nanoid(),
     };
     toast.success(`${contact.name} added to contacts.`);
+
+    const hasContact = contacts.some(
+      object => object.name.toLowerCase() === name.toLowerCase()
+    );
+
+    if (hasContact) {
+      toast.warn(`There is the contact in your list`);
+      return;
+    }
+
     dispatch(addContact(contact));
     setName('');
     setNumber('');
